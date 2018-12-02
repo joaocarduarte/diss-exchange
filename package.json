@@ -1,0 +1,23 @@
+{
+  "name": "diss-project",
+  "version": "1.0.0",
+  "description": "interbank transactions project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joaocarduarte/diss-exchange.git"
+  },
+  "author": "joaocarduarte",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.0.0",
+    "mysql": "^2.16.0",
+    "req-flash": "0.0.3"
+  }
+}
