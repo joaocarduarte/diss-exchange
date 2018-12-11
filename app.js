@@ -6,7 +6,8 @@ const path = require('path');
 const app = express();
 
 const {getHomePage} = require('./routes/index');
-const {getMarketPage} = require('./routes/index');
+const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
+const {getBalances} = require('./routes/account');
 
 const port = 5000;
 
@@ -39,7 +40,10 @@ app.use(fileUpload()); // configure fileupload
 
 // routes for the app
 app.get('/', getHomePage);
-app.get('/market', getMarketPage);
+app.get('/market', getOrders);
+app.post('/addbuy', addBuyOrder);
+app.post('/addsell', addSellOrder);
+app.get('/account', getBalances);
 /*
 app.get('/add', addPlayerPage);
 app.get('/edit/:id', editPlayerPage);

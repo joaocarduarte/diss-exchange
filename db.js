@@ -48,7 +48,7 @@ connection.connect(function(err) {
     console.log("Buy order table created")
     })
 
-    //sell Order Table
+    //Sell Order Table
     var sell_order = `CREATE TABLE IF NOT EXISTS sell_order(
         sell_order_id INT AUTO_INCREMENT PRIMARY KEY, 
         account INT, 
@@ -79,10 +79,10 @@ connection.connect(function(err) {
     })
 
     //Account Inserts
-    var account_inserts = `INSERT INTO account VALUES ?;`;
+    var account_inserts = `INSERT INTO account (iban, fiat_balance, crypto_balance) VALUES ?;`;
     var account_inserts_values =[
-        [ 1,'PT50002700000001234567831', 500, 500],
-        [ 2,'PT50002700000001234567832', 1000, 1000]
+        ['PT50002700000001234567831', 500, 500],
+        ['PT50002700000001234567832', 1000, 1000]
     ];
     connection.query(account_inserts, [account_inserts_values], function (err, result) {
     if (err) throw err;
@@ -98,6 +98,28 @@ connection.connect(function(err) {
     connection.query(currency_inserts, [currency_inserts_values], function (err, result) {
     if (err) throw err;
     console.log("Inserts into Currency table");
+    });
+
+    //Buy Orders Inserts
+    var buy_order_inserts = `INSERT INTO buy_order VALUES ?;`;
+    var buy_order_inserts_values =[
+        [ 1, 1, 2, 5, 10],
+        [ 2, 2, 2, 2, 30],
+    ];
+    connection.query(buy_order_inserts, [buy_order_inserts_values], function (err, result) {
+    if (err) throw err;
+    console.log("Inserts into Buy Order table");
+    });
+
+    //Sell orders Inserts
+    var sell_order_inserts = `INSERT INTO sell_order VALUES ?;`;
+    var sell_order_inserts_values =[
+        [ 1, 1, 1, 10, 60],
+        [ 2, 2, 1, 20, 50],
+    ];
+    connection.query(sell_order_inserts, [sell_order_inserts_values], function (err, result) {
+    if (err) throw err;
+    console.log("Inserts into Sell Order table");
     });
 
 

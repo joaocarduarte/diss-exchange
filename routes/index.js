@@ -4,9 +4,4 @@
             title: "Exchange"
         });
     },
-    getMarketPage: (req, res) => {
-        res.render('market.ejs', {
-            title: "Market"
-        });
-    },
 };

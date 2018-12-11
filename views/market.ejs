@@ -9,22 +9,98 @@
     </header>
     
     <h1>Market</h1>
-
-    <table class="table table-striped">
-        <caption>Sell Orders</caption>
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Price</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Total</th>
-                <th scope="col">Sum</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-
-    </table>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Buy Orders</h2>
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Price</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Sum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% buy_order.forEach((buy, index) => { %>
+                            <tr>
+                                <td><%= buy.price %></td>
+                                <td><%= buy.amount %></td>
+                                <td> ND </td>
+                                <td> ND </td>
+                            </tr>
+                        <% }) %>  
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h2>Sell Orders</h2>
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Price</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Sum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% sell_order.forEach((sell, index) => { %>
+                            <tr>
+                                <td><%= sell.price %></td>
+                                <td><%= sell.amount %></td>
+                                <td> ND </td>
+                                <td> ND </td>
+                            </tr>
+                        <% }) %>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="addbuy" method="post">
+                    <div class="form-row">
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="buy_account" placeholder="Account" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="buy_currency" placeholder="Currency" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="buy_price" placeholder="Price" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="buy_amount" placeholder="Amount" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Place Buy Order</button>
+                </form>
+            </div>
+            <div class="col">
+                <form action="addsell" method="post">
+                    <div class="form-row">
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="sell_account" placeholder="Account" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="sell_currency" placeholder="Currency" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="sell_price" placeholder="Price" required>
+                        </div>
+                        <div class="form-group col-3">
+                            <input type="number" class="form-control" name="sell_amount" placeholder="Amount" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Place Sell Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 
 </body>
 </html>
