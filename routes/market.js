@@ -9,8 +9,6 @@
                 if (err) {
                     res.redirect('/');
                 }
-                console.log(result1);
-                console.log(result2);
                 res.render('market.ejs', {
                     title: "Market"
                     ,buy_order: result1

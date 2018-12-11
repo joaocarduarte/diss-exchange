@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const path = require('path');
 const app = express();
 
-const {getHomePage} = require('./routes/index');
+const {getSendPage} = require('./routes/send');
 const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
 const {getBalances} = require('./routes/account');
 
@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // configure express to
 app.use(fileUpload()); // configure fileupload
 
 // routes for the app
-app.get('/', getHomePage);
+app.get('/', getSendPage);
 app.get('/market', getOrders);
 app.post('/addbuy', addBuyOrder);
 app.post('/addsell', addSellOrder);

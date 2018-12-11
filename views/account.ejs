@@ -8,17 +8,30 @@
         <% include partials/header.ejs %>
     </header>
     
-    <h1>Account 1</h1>
+    <h1 class="text-center">Account 1</h1>
 
     <div class="container">
         <div class="row">
-            <div class="col">
-                Fiat balance : <%= account.fiat_balance %>
-                
-            </div>
-            <div class="col">
-                Crypto balance : <%= account.crypto_balance %>
-            </div>
+            <div class="col-3"> 
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Currency</th>
+                            <th scope="col">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>EUR</td>
+                            <td><%= account.fiat_balance %></td>
+                        </tr>
+                        <tr>
+                            <td>XLM</td>
+                            <td><%= account.crypto_balance %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>  
         </div>
 
     </div>

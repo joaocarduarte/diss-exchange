@@ -5,7 +5,6 @@
             if (err) {
                 res.redirect('/');
             }
-            console.log(result);
             res.render('account.ejs', {
                 title: "Account"
                 ,account: result
