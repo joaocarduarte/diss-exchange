@@ -17,7 +17,8 @@ const db = mysql.createConnection ({
     host: 'localhost',
     user: 'root',
     password: 'password',
-    database: 'exchange-db'
+    database: 'exchange-db',
+    multipleStatements: true
 });
 
 // connect to database

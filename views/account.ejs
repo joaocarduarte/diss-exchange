@@ -23,17 +23,64 @@
                     <tbody>
                         <tr>
                             <td>EUR</td>
-                            <td><%= account.fiat_balance %></td>
+                            <td><%= account[0].fiat_balance %></td>
                         </tr>
                         <tr>
                             <td>XLM</td>
-                            <td><%= account.crypto_balance %></td>
+                            <td><%= account[0].crypto_balance %></td>
                         </tr>
                     </tbody>
                 </table>
             </div>  
         </div>
-
+        <div class="row">
+            <div class="col">
+                <h2>Buy Orders</h2>
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Price</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Sum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% buy_order.forEach((buy, index) => { %>
+                            <tr>
+                                <td><%= buy.price %></td>
+                                <td><%= buy.amount %></td>
+                                <td> ND </td>
+                                <td> ND </td>
+                            </tr>
+                        <% }) %>  
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h2>Sell Orders</h2>
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Price</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Sum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% sell_order.forEach((sell, index) => { %>
+                            <tr>
+                                <td><%= sell.price %></td>
+                                <td><%= sell.amount %></td>
+                                <td> ND </td>
+                                <td> ND </td>
+                            </tr>
+                        <% }) %>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 </body>
