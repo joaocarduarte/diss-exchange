@@ -12,7 +12,8 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-3"> 
+            <div class="col-4 offset-4">
+                <h2 class="text-center">Balances</h2>
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
@@ -35,7 +36,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <h2>Buy Orders</h2>
+                <h2 class="text-center">Buy Orders</h2>
                 <table class="table table-striped">
                     <thead class="thead-light">
                         <tr>
@@ -43,22 +44,29 @@
                             <th scope="col">Amount</th>
                             <th scope="col">Total</th>
                             <th scope="col">Sum</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
+                        <% var sum = 0 %>
                         <% buy_order.forEach((buy, index) => { %>
+                            <% var total = buy.price * buy.amount %>
+                            <% sum += total %>
                             <tr>
                                 <td><%= buy.price %></td>
                                 <td><%= buy.amount %></td>
-                                <td> ND </td>
-                                <td> ND </td>
+                                <td><%= total %></td>
+                                <td><%= sum %></td>
+                                <td>
+                                    <a href="/deletebuy/<%= buy.buy_order_id %>" class="btn">Cancel</a>
+                                </td>
                             </tr>
                         <% }) %>  
                     </tbody>
                 </table>
             </div>
             <div class="col">
-                <h2>Sell Orders</h2>
+                <h2 class="text-center">Sell Orders</h2>
                 <table class="table table-striped">
                     <thead class="thead-light">
                         <tr>
@@ -66,15 +74,22 @@
                             <th scope="col">Amount</th>
                             <th scope="col">Total</th>
                             <th scope="col">Sum</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
+                        <% sum = 0; %>
                         <% sell_order.forEach((sell, index) => { %>
+                            <% var total = sell.price * sell.amount; %>
+                            <% sum += total; %>
                             <tr>
                                 <td><%= sell.price %></td>
                                 <td><%= sell.amount %></td>
-                                <td> ND </td>
-                                <td> ND </td>
+                                <td><%= total %></td>
+                                <td><%= sum %></td>
+                                <td>
+                                    <a href="/deletesell/<%= sell.sell_order_id %>" class="btn">Cancel</a>
+                                </td>
                             </tr>
                         <% }) %>  
                     </tbody>

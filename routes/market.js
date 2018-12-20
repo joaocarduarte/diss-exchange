@@ -23,13 +23,31 @@
         let price = req.body.buy_price;
         let amount = req.body.buy_amount;
 
-        let query = "INSERT INTO `buy_order` (account, currency, price, amount) VALUES ('" + account + "', '" + currency + "', '" + price + "', '" + amount + "')";
-                        
-        db.query(query, (err, result) => {
+        //Create buy order
+        let insertBuyQuery = "INSERT INTO `buy_order` (account, currency, price, amount) VALUES ('1', '2', '" + price + "', '" + amount + "')";                     
+        db.query(insertBuyQuery, (err, result) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            res.redirect('/market');
+        });
+
+        //Update fiat balance after buy order
+        let balanceQuery = "SELECT fiat_balance FROM account WHERE account_id = 1";
+        db.query(balanceQuery, (err, result) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            let balance = result[0].fiat_balance;
+            let balanceFinal = balance - (price * amount);
+            
+            let updateBalanceQuery = "UPDATE account SET fiat_balance=" + balanceFinal + " WHERE account_id = 1 ";
+            db.query(updateBalanceQuery, (err, result) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.redirect('/market');
+            });
         });
     },
     addSellOrder: (req, res) => {
@@ -38,13 +56,31 @@
         let price = req.body.sell_price;
         let amount = req.body.sell_amount;
 
-        let query = "INSERT INTO `sell_order` (account, currency, price, amount) VALUES ('" + account + "', '" + currency + "', '" + price + "', '" + amount + "')";
-                        
+        //Create sell order
+        let query = "INSERT INTO `sell_order` (account, currency, price, amount) VALUES ('1', '2', '" + price + "', '" + amount + "')";                
         db.query(query, (err, result) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            res.redirect('/market');
+        });
+
+        //Update crypto balance after buy order
+        let balanceQuery = "SELECT crypto_balance FROM account WHERE account_id = 1";
+        db.query(balanceQuery, (err, result) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            let balance = result[0].crypto_balance;
+            let balanceFinal = balance - (price * amount);
+            
+            let updateBalanceQuery = "UPDATE account SET crypto_balance=" + balanceFinal + " WHERE account_id = 1 ";
+            db.query(updateBalanceQuery, (err, result) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.redirect('/market');
+            });
         });
     },
 };

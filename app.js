@@ -7,7 +7,7 @@ const app = express();
 
 const {getSendPage} = require('./routes/send');
 const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
-const {getBalances} = require('./routes/account');
+const {getAccountInfo, deleteAccountBuyOrder, deleteAccountSellOrder} = require('./routes/account');
 
 const port = 5000;
 
@@ -44,7 +44,9 @@ app.get('/', getSendPage);
 app.get('/market', getOrders);
 app.post('/addbuy', addBuyOrder);
 app.post('/addsell', addSellOrder);
-app.get('/account', getBalances);
+app.get('/account', getAccountInfo);
+app.get('/deletebuy/:id', deleteAccountBuyOrder);
+app.get('/deletesell/:id', deleteAccountSellOrder);
 /*
 app.get('/add', addPlayerPage);
 app.get('/edit/:id', editPlayerPage);
