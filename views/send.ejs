@@ -8,6 +8,24 @@
         <% include partials/header.ejs %>
     </header>
     
-    <h1>Home</h1>
+    <h1 class="text-center">Send</h1>
+
+    <div class="container">
+        <form action="send" method="post">
+            <div class="form-row">
+                <div class="form-group col-3 offset-2">
+                    <input type="number" class="form-control" name="send_amount" placeholder="Amount" required>
+                </div>
+                <div class="form-group col-3">
+                    <input type="number" class="form-control" name="send_destination" placeholder="Destination" required>
+                </div>
+                <div class="form-group col-2">
+                    <button type="submit" class="btn">Transfer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
 </body>
 </html>
