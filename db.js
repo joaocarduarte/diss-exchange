@@ -29,8 +29,8 @@ connection.connect(function(err) {
         symbol VARCHAR(4)
     );`;
     connection.query(currency, function(err, results, fields){
-    if(err) throw err;
-    console.log("Currency table created")
+        if(err) throw err;
+        console.log("Currency table created")
     })
 
     //Buy Order Table
@@ -44,8 +44,8 @@ connection.connect(function(err) {
         FOREIGN KEY (currency) REFERENCES currency(currency_id)
     );`;
     connection.query(buy_order, function(err, results, fields){
-    if(err) throw err;
-    console.log("Buy order table created")
+        if(err) throw err;
+        console.log("Buy order table created")
     })
 
     //Sell Order Table
@@ -59,8 +59,8 @@ connection.connect(function(err) {
         FOREIGN KEY (currency) REFERENCES currency(currency_id)
     );`;
     connection.query(sell_order, function(err, results, fields){
-    if(err) throw err;
-    console.log("Sell order table created")
+        if(err) throw err;
+        console.log("Sell order table created")
     })
 
     //Transaction Table
@@ -74,8 +74,30 @@ connection.connect(function(err) {
         FOREIGN KEY (currency) REFERENCES currency(currency_id)
     );`;
     connection.query(transaction, function(err, results, fields){
-    if(err) throw err;
-    console.log("Transaction table created")
+        if(err) throw err;
+        console.log("Transaction table created")
+    })
+
+    //Stellar Transaction Table
+    var stellarTransaction = `CREATE TABLE IF NOT EXISTS StellarTransactions(
+        user_id INT AUTO_INCREMENT PRIMARY KEY,
+        destination VARCHAR(56),
+        xlm_amount INT,
+        state VARCHAR(8)
+    );`;
+    connection.query(stellarTransaction, function(err, results, fields){
+        if(err) throw err;
+        console.log("Stellar Transaction table created")
+    })
+
+    //Stellar Cursor Table
+    var stellarCursor = `CREATE TABLE IF NOT EXISTS StellarCursor(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        crsr VARCHAR(50)
+    );`;
+    connection.query(stellarCursor, function(err, results, fields){
+        if(err) throw err;
+        console.log("Stellar Cursor table created")
     })
 
     //Account Inserts

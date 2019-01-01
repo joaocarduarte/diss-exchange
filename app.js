@@ -2,6 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const util = require('util');
 const path = require('path');
 const app = express();
 
@@ -59,3 +60,66 @@ app.post('/edit/:id', editPlayer);
 app.listen(port, () => {
     console.log(`Server running on port: ${port}`);
 });
+
+// STELLAR
+// Config your server
+var config = {};
+config.baseAccount = "GCYRYPRECTSQMEHGQO4WSZA7OUKI7W4WGMDR72ZVVQ77NYVPVAVTKQLR";
+config.baseAccountSecret = "SCKRH62WRNRTLKYPPGTDZENGWWYH7U4ATZCCWUJLOQN5K6D4FAX4YVTC";
+
+// You can use Stellar.org's instance of Horizon or your own
+config.horizon = 'https://horizon-testnet.stellar.org';
+
+// Include the JS Stellar SDK
+// It provides a client-side interface to Horizon
+var StellarSdk = require('stellar-sdk');
+// uncomment for live network:
+// StellarSdk.Network.usePublicNetwork();
+
+// Initialize the Stellar SDK with the Horizon instance
+// You want to connect to
+var server = new StellarSdk.Server(config.horizon);
+
+// Get the latest cursor position
+var lastToken = latestCursorPosition("StellarCursor");
+
+console.log("lastToken -> " + lastToken);
+
+async function latestCursorPosition(table) {
+    try {
+        db.query = util.promisify(db.query);
+        var cenas = await db.query("SELECT * FROM `buy_order` WHERE buy_order_id = 1");
+    }
+    catch {
+    }
+    console.log(cenas[0].account);
+    return cenas[0].account;
+}
+
+// Listen for payments from where you last stopped
+// GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}/payments?cursor={last_token}
+let callBuilder = server.payments().forAccount(config.baseAccount);
+
+// If no cursor has been saved yet, don't add cursor parameter
+if (lastToken) {
+    callBuilder.cursor(lastToken);
+}
+/*
+callBuilder.stream({onmessage: handlePaymentResponse});
+
+// Load the account sequence number from Horizon and return the account
+// GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}
+server.loadAccount(config.baseAccount)
+  .then(function (account) {
+    submitPendingTransactions(account);
+  })
+*/
+
+
+function handlePaymentResponse(){
+    return;
+}
+
+function submitPendingTransactions(account){
+    return;
+}

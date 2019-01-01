@@ -18,6 +18,9 @@
     "express": "^4.16.4",
     "express-fileupload": "^1.0.0",
     "mysql": "^2.16.0",
-    "req-flash": "0.0.3"
+    "req-flash": "0.0.3",
+    "stellar-sdk": "^0.11.0",
+    "sync-mysql": "^3.0.1",
+    "util": "^0.11.1"
   }
 }
