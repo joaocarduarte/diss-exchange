@@ -1,4 +1,6 @@
-(module).exports = {
+const stellar = require('./stellar');
+
+module.exports = {
     getAccountInfo: (req, res) => {
         db.query("SELECT * FROM account LIMIT 1; SELECT * FROM `buy_order` WHERE account=1 ORDER BY price DESC; SELECT * FROM `sell_order` WHERE account=1 ORDER BY price ASC", [1, 2, 3], (err, results) => {
             if (err) {
@@ -9,8 +11,11 @@
                 ,account: results[0]
                 ,buy_order: results[1]
                 ,sell_order: results[2]
+                ,publicKey: stellar.publicKey
             });
         });
+
+        //stellar.listenDeposits();  
     },
     deleteAccountBuyOrder: (req, res) => {
         let buy_order_id = req.params.id;

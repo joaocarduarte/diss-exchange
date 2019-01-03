@@ -1,4 +1,4 @@
-(module).exports = {
+module.exports = {
     getOrders: (req, res) => {
         // execute query
         db.query("SELECT * FROM `buy_order` ORDER BY price DESC", (err, result1) => {
