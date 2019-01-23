@@ -80,9 +80,11 @@ connection.connect(function(err) {
 
     //Stellar Transaction Table
     var stellarTransaction = `CREATE TABLE IF NOT EXISTS StellarTransactions(
-        user_id INT AUTO_INCREMENT PRIMARY KEY,
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
         destination VARCHAR(56),
         xlm_amount INT,
+        memo VARCHAR(8),
         state VARCHAR(8)
     );`;
     connection.query(stellarTransaction, function(err, results, fields){
@@ -99,7 +101,7 @@ connection.connect(function(err) {
         if(err) throw err;
         console.log("Stellar Cursor table created")
     })
-
+/*
     //Account Inserts
     var account_inserts = `INSERT INTO account (iban, fiat_balance, crypto_balance) VALUES ?;`;
     var account_inserts_values =[
@@ -143,6 +145,6 @@ connection.connect(function(err) {
     if (err) throw err;
     console.log("Inserts into Sell Order table");
     });
-
+/*
 
   });

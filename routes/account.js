@@ -17,6 +17,19 @@ module.exports = {
 
         //stellar.listenDeposits();  
     },
+    makeWithdraw: (req, res) => {
+        let destinationAddress = req.body.destination_address;
+        let amountLumens = req.body.amount_lumens;
+        let memo = req.body.memo;
+        let userID = 1;
+
+        stellar.handleRequestWithdrawal(userID,amountLumens,destinationAddress,memo);
+        
+        res.redirect('/account');
+
+
+        //stellar.handleRequestWithdrawal(1,10,'GCSLPPR3K4O6GGNGQ4XZ7YKVSEJTSFUV7P34N554IVTIIHHQHYSBSMOK');
+    },
     deleteAccountBuyOrder: (req, res) => {
         let buy_order_id = req.params.id;
 
@@ -64,7 +77,6 @@ module.exports = {
             if (err) {
                 return res.status(500).send(err);
             }
-            let total = result[0].price * result[0].amount;
 
             //Get crypto balance from account
             let balanceQuery = "SELECT crypto_balance FROM account WHERE account_id = 1";
@@ -72,7 +84,7 @@ module.exports = {
                 if (err) {
                     return res.status(500).send(err);
                 }
-                let balanceFinal = result1[0].crypto_balance + total;
+                let balanceFinal = result1[0].crypto_balance + result[0].amount;
                 
                 //Update crypto balance
                 let updateBalanceQuery = "UPDATE account SET crypto_balance=" + balanceFinal + " WHERE account_id = 1 ";

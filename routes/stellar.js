@@ -1,4 +1,5 @@
 const sync_mysql = require('sync-mysql');
+var StellarSdk = require('stellar-sdk');
 
 //SYNC db conection
 var connection = new sync_mysql({
@@ -12,33 +13,24 @@ global.connection = connection;
 
 //-------- STELLAR
 // Config your server
+var sourceKeys = StellarSdk.Keypair.fromSecret('SC2NXK74HDSNUWG6I5KNFN7GW3ADX77IU3PY3XXY7CTHWTQJYUXD5CCT');
+
 var config = {};
 config.baseAccount = "GCTBIDPRUIBUPB6ETJI7RSFPNZEGCGDE6DXCV73P6NX3RBZ43L4ADTWH";
 config.baseAccountSecret = "SC2NXK74HDSNUWG6I5KNFN7GW3ADX77IU3PY3XXY7CTHWTQJYUXD5CCT";
 
 module.exports.publicKey = config.baseAccount;
 
-
-// You can use Stellar.org's instance of Horizon or your own
-config.horizon = 'https://horizon-testnet.stellar.org';
-
-// Include the JS Stellar SDK
-// It provides a client-side interface to Horizon
-var StellarSdk = require('stellar-sdk');
-// uncomment for live network:
-// StellarSdk.Network.usePublicNetwork();
+StellarSdk.Network.useTestNetwork();
 
 // Initialize the Stellar SDK with the Horizon instance
-// You want to connect to
+config.horizon = 'https://horizon-testnet.stellar.org';
 var server = new StellarSdk.Server(config.horizon);
 
 // Get the latest cursor position
 var lastToken = latestCursorPosition();
 
-console.log("Last Cursor: " + lastToken);
-
 // Listen for payments from where you last stopped
-// GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}/payments?cursor={last_token}
 let callBuilder = server.payments().forAccount(config.baseAccount);
 
 // If no cursor has been saved yet, don't add cursor parameter
@@ -46,15 +38,13 @@ if (lastToken) {
     callBuilder.cursor(lastToken);
 }
 
-
 callBuilder.stream({onmessage: handlePaymentResponse});
-/*
+
 // Load the account sequence number from Horizon and return the account
-// GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}
 server.loadAccount(config.baseAccount).then(function (account) {
     submitPendingTransactions(account);
 })
-*/
+
 
 function latestCursorPosition() {
     var cenas = connection.query("SELECT crsr FROM `StellarCursor` WHERE id = (SELECT MAX(id) FROM `StellarCursor`)");
@@ -64,7 +54,7 @@ function latestCursorPosition() {
     return cenas[0].crsr;
 }
 
-//---- Listening for Deposits
+//Deposits
 function listenDeposits (){
     // Start listening for payments from where you last stopped
     var lastToken = latestCursorPosition();
@@ -79,7 +69,6 @@ function listenDeposits (){
 
     callBuilder.stream({onmessage: handlePaymentResponse});
 }
-
 
 function handlePaymentResponse(record) {
     // GET https://horizon-testnet.stellar.org/transaction/{id-of-transaction-this-payment-is-part-of}
@@ -109,7 +98,7 @@ function handlePaymentResponse(record) {
                 connection.query("INSERT INTO stellarcursor (crsr) VALUES (?)", [record.paging_token]);
 
                 console.log("===> Payment received to account: " + customer
-                    + "\n= Amout: " + record.amount 
+                    + "\n= Amout: " + record.amount + " xlm"
                     + "\n= New cursor: " + record.paging_token
                     + "\n");
 
@@ -135,6 +124,102 @@ function handlePaymentResponse(record) {
     });
 }
 
-function submitPendingTransactions(account){
-    return;
+
+//Withdrawals
+exports.handleRequestWithdrawal = function (userID,amountLumens,destinationAddress,memo) {
+    // Read the user's balance from the exchange's database
+    var cryptoBalance = connection.query("SELECT * FROM account WHERE account_id = ?", [userID]);
+
+    // Check that user has the required lumens
+    if (amountLumens <= cryptoBalance[0].crypto_balance){
+
+        // Debit the user's internal lumen balance by the amount of lumens they are withdrawing
+        let total = cryptoBalance[0].crypto_balance - amountLumens;
+        connection.query("UPDATE account SET crypto_balance = ? WHERE account_id = ?", [total, userID]);
+
+        // Save the transaction information in the StellarTransactions table
+        // store([userID, destinationAddress, amountLumens, "pending"], "StellarTransactions");
+        connection.query("INSERT INTO stellartransactions (user_id, destination, xlm_amount, memo, state) VALUES (?, ?, ?, ?, ?);", [userID, destinationAddress, amountLumens, memo, "pending"]);
+
+        console.log("===> Withdraw from account: " + userID
+                    + "\n= Amout: " + amountLumens + " xlm"
+                    + "\n= Destination: " + destinationAddress
+                    + "\n= Memo: " + memo
+                    + "\n");
+        
+    } else {
+        // If the user doesn't have enough XLM, you can alert them
+        console.log("User doesn't have enough XLM!");
+    }
+}
+
+
+
+// This is the function that handles submitting a single transaction
+function submitTransaction( transactionId, destinationAddress, amountLumens, memo) {
+    console.log("===> Submitting trasaction " + transactionId);
+    
+    // Update transaction state to sending so it won't be resubmitted in case of the failure.
+    connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["sending", transactionId]);
+
+    server.loadAccount(destinationAddress)
+    // If the account is not found, surface a nice error message for logging.
+    .catch(StellarSdk.NotFoundError, function (error) {
+        connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["error", transactionId]);
+        throw new Error('The destination account does not exist!');
+    })
+    // If there was no error, load up-to-date information on your account.
+    .then(function() {
+        return server.loadAccount(sourceKeys.publicKey());
+    })
+    .then(function(sourceAccount) {
+        // Start building the transaction.
+        transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+        .addOperation(StellarSdk.Operation.payment({
+            destination: destinationAddress,
+            asset: StellarSdk.Asset.native(),
+            amount: amountLumens.toString()
+        }))
+        // A memo is optional
+        .addMemo(StellarSdk.Memo.text(memo))
+        .build();
+
+        // Sign the transaction to prove you are actually the person sending it.
+        transaction.sign(sourceKeys);
+
+        // And finally, send it off to Stellar!
+        return server.submitTransaction(transaction);
+    })
+    .then(function(result) {
+        connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["done", transactionId]);
+        console.log('= Success!\n');
+        //console.log('Results:', result);
+    })
+    .catch(function(error) {
+        connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["error", transactionId]);
+        console.error('Something went wrong!', error);
+        // If the result is unknown (no response body, timeout etc.) we simply resubmit
+        // already built transaction:
+        // server.submitTransaction(transaction);
+    });
+}
+
+// This function handles submitting all pending transactions, and calls the previous one
+// This function should be run in the background continuously
+
+async function submitPendingTransactions() {
+    // See what transactions in the db are still pending
+    var pendingTransactions = connection.query("SELECT * FROM stellartransactions WHERE state = ?", ["pending"]);
+    console.log("Pending Transactions: " + pendingTransactions.length);
+
+    while (pendingTransactions.length > 0) {
+        var tx = pendingTransactions.pop();
+        await submitTransaction( tx.id, tx.destination, tx.xlm_amount, tx.memo);
+    }
+
+    // Wait 30 seconds and process next batch of transactions.
+    setTimeout(function() {
+        submitPendingTransactions();
+    }, 30*1000);
+
 }

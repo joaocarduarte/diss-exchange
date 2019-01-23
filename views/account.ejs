@@ -34,8 +34,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col">
-                <div class="row text-center">
+            <div class="col border">
+                <div class="row">
                     <div class="col">
                         <h4>Deposit</h4>
                         <p>Address: <%= publicKey %></p>
@@ -43,19 +43,24 @@
                             <small>(If the Memo is not included in your transfer we cannot credit your account.)</small></p>
                     </div>
                 </div>
-                <div class="row text-center">
+                <div class="row">
                     <div class="col">
                         <h4>Withdraw</h4>
-                        <form action="" method="post">
+                        <form action="makewithdraw" method="post">
                             <div class="form-row">
-                                <div class="form-group col-9">
-                                    <input type="text" class="form-control" name="destination_address" placeholder="Destination Address" required>
+                                    <div class="form-group col-10">
+                                        <input type="text" class="form-control" name="destination_address" placeholder="Destination Address" required>
+                                    </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <input type="number" class="form-control" name="amount_lumens" placeholder="Amount" required>
+                                </div>
+                                <div class="form-group col-4">
+                                    <input type="text" class="form-control" name="memo" placeholder="Memo (opt)">
                                 </div>
                                 <div class="form-group col-2">
-                                    <input type="number" class="form-control" name="memo" placeholder="Memo" required>
-                                </div>
-                                <div class="form-group col-1">
-                                    <button type="submit" class="btn">Send</button>
+                                    <button type="submit" class="btn"> Withdraw </button>
                                 </div>
                             </div>
                         </form>
@@ -64,68 +69,89 @@
             </div>
         </div>
         <div class="row text-center">
-            <div class="col">
-                <h2>Buy Orders</h2>
-                <table class="table table-sm table-striped">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Price</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Sum</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% var sum = 0 %>
-                        <% buy_order.forEach((buy, index) => { %>
-                            <% var total = buy.price * buy.amount %>
-                            <% sum += total %>
-                            <tr>
-                                <td><%= buy.price %></td>
-                                <td><%= buy.amount %></td>
-                                <td><%= total %></td>
-                                <td><%= sum %></td>
-                                <td>
-                                    <a href="/deletebuy/<%= buy.buy_order_id %>">Cancel</a>
-                                </td>
-                            </tr>
-                        <% }) %>  
-                    </tbody>
-                </table>
+            <div class="col-5">
+                <div class="row">
+                    <div class="col">
+                        <h2>Buy Orders</h2>
+                        <table class="table table-sm table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Price <small>(€)</small></th>
+                                    <th scope="col">Amount <small>(XLM)</small></th>
+                                    <th scope="col">Total <small>(€)</small></th>
+                                    <th scope="col">Sum <small>(€)</small></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var sum = 0 %>
+                                <% buy_order.forEach((buy, index) => { %>
+                                    <% var total = buy.price * buy.amount %>
+                                    <% sum += total %>
+                                    <tr>
+                                        <td><%= buy.price %></td>
+                                        <td><%= buy.amount %></td>
+                                        <td><%= total %></td>
+                                        <td><%= sum %></td>
+                                        <td>
+                                            <a href="/deletebuy/<%= buy.buy_order_id %>">Cancel</a>
+                                        </td>
+                                    </tr>
+                                <% }) %>  
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h2>Sell Orders</h2>
+                        <table class="table table-sm table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Price <small>(€)</small></th>
+                                    <th scope="col">Amount <small>(XLM)</small></th>
+                                    <th scope="col">Total <small>(€)</small></th>
+                                    <th scope="col">Sum <small>(€)</small></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% sum = 0; %>
+                                <% sell_order.forEach((sell, index) => { %>
+                                    <% var total = sell.price * sell.amount; %>
+                                    <% sum += total; %>
+                                    <tr>
+                                        <td><%= sell.price %></td>
+                                        <td><%= sell.amount %></td>
+                                        <td><%= total %></td>
+                                        <td><%= sum %></td>
+                                        <td>
+                                            <a href="/deletesell/<%= sell.sell_order_id %>">Cancel</a>
+                                        </td>
+                                    </tr>
+                                <% }) %>  
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="col">
-                <h2>Sell Orders</h2>
+            <div class="col-7">
+                <h2>Transactions History</h2>
                 <table class="table table-sm table-striped">
                     <thead class="thead-light">
                         <tr>
-                            <th scope="col">Price</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Sum</th>
-                            <th scope="col"></th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amount </th>
+                            <th scope="col">Currency</th>
+                            <th scope="col">Destination</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% sum = 0; %>
-                        <% sell_order.forEach((sell, index) => { %>
-                            <% var total = sell.price * sell.amount; %>
-                            <% sum += total; %>
-                            <tr>
-                                <td><%= sell.price %></td>
-                                <td><%= sell.amount %></td>
-                                <td><%= total %></td>
-                                <td><%= sum %></td>
-                                <td>
-                                    <a href="/deletesell/<%= sell.sell_order_id %>">Cancel</a>
-                                </td>
-                            </tr>
-                        <% }) %>  
+
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
 </body>
 </html>

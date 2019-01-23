@@ -31,7 +31,7 @@ module.exports = {
             }
         });
 
-        //Update fiat balance after buy order
+        //Update fiat balance
         let balanceQuery = "SELECT fiat_balance FROM account WHERE account_id = 1";
         db.query(balanceQuery, (err, result) => {
             if (err) {
@@ -64,7 +64,7 @@ module.exports = {
             }
         });
 
-        //Update crypto balance after buy order
+        //Update crypto balance
         let balanceQuery = "SELECT crypto_balance FROM account WHERE account_id = 1";
         db.query(balanceQuery, (err, result) => {
             if (err) {
@@ -72,7 +72,7 @@ module.exports = {
             }
 
             let balance = result[0].crypto_balance;
-            let balanceFinal = balance - (price * amount);
+            let balanceFinal = balance - (amount);
             
             let updateBalanceQuery = "UPDATE account SET crypto_balance=" + balanceFinal + " WHERE account_id = 1 ";
             db.query(updateBalanceQuery, (err, result) => {

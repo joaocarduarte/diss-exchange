@@ -9,8 +9,9 @@ const app = express();
 
 const {getSendPage} = require('./routes/send');
 const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
-const {getAccountInfo, deleteAccountBuyOrder, deleteAccountSellOrder} = require('./routes/account');
+const {getAccountInfo, makeWithdraw, deleteAccountBuyOrder, deleteAccountSellOrder} = require('./routes/account');
 const stellar = require('./routes/stellar');
+const order = require('./routes/order');
 
 const port = 5000;
 
@@ -50,6 +51,7 @@ app.get('/market', getOrders);
 app.post('/addbuy', addBuyOrder);
 app.post('/addsell', addSellOrder);
 app.get('/account', getAccountInfo);
+app.post('/makewithdraw', makeWithdraw);
 app.get('/deletebuy/:id', deleteAccountBuyOrder);
 app.get('/deletesell/:id', deleteAccountSellOrder);
 /*
