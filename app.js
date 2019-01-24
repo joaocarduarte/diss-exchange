@@ -10,7 +10,7 @@ const app = express();
 const {getSendPage} = require('./routes/send');
 const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
 const {getAccountInfo, makeWithdraw, deleteAccountBuyOrder, deleteAccountSellOrder} = require('./routes/account');
-const stellar = require('./routes/stellar');
+//const stellar = require('./routes/stellar');
 const order = require('./routes/order');
 
 const port = 5000;

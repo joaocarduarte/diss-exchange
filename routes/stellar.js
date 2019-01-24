@@ -210,7 +210,7 @@ function submitTransaction( transactionId, destinationAddress, amountLumens, mem
 async function submitPendingTransactions() {
     // See what transactions in the db are still pending
     var pendingTransactions = connection.query("SELECT * FROM stellartransactions WHERE state = ?", ["pending"]);
-    console.log("Pending Transactions: " + pendingTransactions.length);
+    
 
     while (pendingTransactions.length > 0) {
         var tx = pendingTransactions.pop();
