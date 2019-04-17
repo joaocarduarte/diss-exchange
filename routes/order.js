@@ -1,4 +1,4 @@
-createBuyOrder = function (account, currency, price, amount) {
+createBuyOrder = async function (account, currency, price, amount) {
 
     //Update fiat balance from account
     let balanceQuery = "SELECT fiat_balance FROM account WHERE account_id =" + account;
@@ -85,7 +85,7 @@ handleBuyOrder = function (account, currency, price, amount) {
                                     if (err) {
                                         return 1;
                                     }
-                                    console.log("Valor da buy order: " + (amount - result[0].amount));
+                                    console.log("===> Buy order amount updated to: " + (amount - result[0].amount));
                                     handleBuyOrder(account, currency, price, (Number(amount) - result[0].amount));
                                 });
                             });
@@ -162,7 +162,7 @@ handleBuyOrder = function (account, currency, price, amount) {
                                     if (err) {
                                         return 1;
                                     }
-                                    console.log("Valor da sell order: " + (result[0].amount - amount));
+                                    console.log("===> Sell order " + result[0].sell_order_id + " amount updated to: " + (result[0].amount - amount));
                                     return 0;
                                 });
                             });

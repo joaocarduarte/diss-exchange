@@ -7,7 +7,7 @@ const util = require('util');
 const path = require('path');
 const app = express();
 
-const {getSendPage} = require('./routes/send');
+const {getSendPage,sendMoney} = require('./routes/send');
 const {getOrders, addBuyOrder, addSellOrder} = require('./routes/market');
 const {getAccountInfo, makeWithdraw, deleteAccountBuyOrder, deleteAccountSellOrder} = require('./routes/account');
 //const stellar = require('./routes/stellar');
@@ -47,6 +47,7 @@ app.use(fileUpload()); // configure fileupload
 
 // routes for the app
 app.get('/', getSendPage);
+app.post('/sendmoney', sendMoney);
 app.get('/market', getOrders);
 app.post('/addbuy', addBuyOrder);
 app.post('/addsell', addSellOrder);
@@ -54,13 +55,7 @@ app.get('/account', getAccountInfo);
 app.post('/makewithdraw', makeWithdraw);
 app.get('/deletebuy/:id', deleteAccountBuyOrder);
 app.get('/deletesell/:id', deleteAccountSellOrder);
-/*
-app.get('/add', addPlayerPage);
-app.get('/edit/:id', editPlayerPage);
-app.get('/delete/:id', deletePlayer);
-app.post('/add', addPlayer);
-app.post('/edit/:id', editPlayer);
-*/
+
 
 // set the app to listen on the port
 app.listen(port, () => {
