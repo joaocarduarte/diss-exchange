@@ -13,18 +13,22 @@
     <div class="container">
         <form action="sendmoney" method="post">
             <div class="form-row">
-                <div class="form-group col-4">
+                <div class="form-group offset-3 col-4">
                     <input type="number" step="0.01" class="form-control" name="send_amount" placeholder="Amount (€)" required>
                 </div>
-                <div class="form-group col-6">
+            </div>
+            <div class="form-row">
+                <div class="form-group offset-3 col-6">
                     <input type="text" class="form-control" name="send_destination" placeholder="Destination" required>
                 </div>
-                <div class="form-group col-2">
+            </div>
+            <div class="form-row">
+                <div class="form-group offset-3 col-2">
                     <input type="text" class="form-control" name="send_memo" placeholder="Memo" required>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group offset-5 col-2">
+                <div class="form-group offset-3 col-2">
                     <button type="submit" class="btn">Transfer</button>
                 </div>
             </div>

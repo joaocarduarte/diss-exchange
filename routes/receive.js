@@ -41,13 +41,14 @@ convertReceivingMoney = function(customer, crypto, fiat) {
         }
 
         if(crypto == 0 ){
+            var d = new Date();
             //Money tottaly converted
-            console.log("Received fiat: " + fiat.toFixed(2) + "€");
+            console.log("= Received fiat: " + fiat.toFixed(2) + "€"
+                    + "\n ===> Transaction Complete -> " + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds());
         }
         else{
             //If the buy offer sum is higher or equal to the crypto amount
             if(result[0].amount >= crypto){
-                console.log("aqui: " + crypto * result[0].price);
                 createSellOrder(customer, 2, result[0].price, crypto);
                 convertReceivingMoney(customer, 0, (crypto * result[0].price));
             }

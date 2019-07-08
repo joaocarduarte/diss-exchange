@@ -14,11 +14,11 @@ global.connection = connection;
 
 //-------- STELLAR
 // Config your server
-var sourceKeys = StellarSdk.Keypair.fromSecret('SC646Q3RRF6Z6GUDHRI5AGEUIZNN3GSL6BSB7BG7OFPNA3EYG5E2ZCKA');
+var sourceKeys = StellarSdk.Keypair.fromSecret('SA7RB5DI4XYYHMNI4G7SK6HJEBNWARU7V4O5EUFRM2MNECQA3MOVNEVQ');
 
 var config = {};
-config.baseAccount = "GDD3PYKAUGVKKAZ3HSNECULOXLP6IXPEDSNC2OKDSE2NOERTWMM2A5IX";
-config.baseAccountSecret = "SC646Q3RRF6Z6GUDHRI5AGEUIZNN3GSL6BSB7BG7OFPNA3EYG5E2ZCKA";
+config.baseAccount = "GCCBAN6UI27YF7HLJZHLM47TJW2VD7KIBOKCICITA4577K4HZ4TY2HNZ";
+config.baseAccountSecret = "SA7RB5DI4XYYHMNI4G7SK6HJEBNWARU7V4O5EUFRM2MNECQA3MOVNEVQ";
 
 module.exports.publicKey = config.baseAccount;
 
@@ -75,7 +75,6 @@ function handlePaymentResponse(record) {
     // GET https://horizon-testnet.stellar.org/transaction/{id-of-transaction-this-payment-is-part-of}
     record.transaction().then(function(txn) {
         var customer = txn.memo;
-        console.log("Memo: " + customer);
 
         if(customer.startsWith('s')){
             customer = customer.substring(1);
@@ -99,10 +98,9 @@ function handlePaymentResponse(record) {
                     // Store the cursor in your database
                     connection.query("INSERT INTO stellarcursor (crsr) VALUES (?)", [record.paging_token]);
 
-                    console.log("===> Payment received to account: " + customer
+                    console.log("\n===> Payment received to account: " + customer
                         + "\n= Amout: " + record.amount + " xlm"
-                        + "\n= New cursor: " + record.paging_token
-                        + "\n");
+                        + "\n= New cursor: " + record.paging_token);
 
                     /* TODO - Fazer o codigo em cima em transacao
                     // Update in an atomic transaction
@@ -202,7 +200,7 @@ exports.handleRequestWithdrawal = function (userID,amountLumens,destinationAddre
         // store([userID, destinationAddress, amountLumens, "pending"], "StellarTransactions");
         connection.query("INSERT INTO stellartransactions (user_id, destination, xlm_amount, memo, state) VALUES (?, ?, ?, ?, ?);", [userID, destinationAddress, amountLumens, memo, "pending"]);
 
-        console.log("===> Withdraw from account: " + userID
+        console.log("\n===> Withdraw from account: " + userID
                     + "\n= Amout: " + amountLumens + " xlm"
                     + "\n= Destination: " + destinationAddress
                     + "\n= Memo: " + memo
@@ -217,13 +215,13 @@ exports.handleRequestWithdrawal = function (userID,amountLumens,destinationAddre
 
 
 // This is the function that handles submitting a single transaction
-function submitTransaction( transactionId, destinationAddress, amountLumens, memo) {
+async function submitTransaction( transactionId, destinationAddress, amountLumens, memo) {
     console.log("\n===> Submitting trasaction " + transactionId + "; amount = "+ amountLumens);
     
     // Update transaction state to sending so it won't be resubmitted in case of the failure.
     connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["sending", transactionId]);
 
-    server.loadAccount(destinationAddress)
+    await server.loadAccount(destinationAddress)
     // If the account is not found, surface a nice error message for logging.
     .catch(StellarSdk.NotFoundError, function (error) {
         connection.query("UPDATE stellartransactions SET state = ? WHERE id = ?", ["error", transactionId]);
@@ -273,14 +271,15 @@ async function submitPendingTransactions() {
     var pendingTransactions = connection.query("SELECT * FROM stellartransactions WHERE state = ?", ["pending"]);
     
 
-    while (pendingTransactions.length > 0) {
+    if (pendingTransactions.length > 0) {
         var tx = pendingTransactions.pop();
         await submitTransaction( tx.id, tx.destination, tx.xlm_amount, tx.memo);
     }
 
     // Wait 30 seconds and process next batch of transactions.
-    setTimeout(function() {
+    setTimeout(
+        function() {
         submitPendingTransactions();
-    }, 10*1000);
+        }, 0*1000);
 
 }

@@ -13,8 +13,19 @@ module.exports = {
         let memo = "s" + req.body.send_memo;
         let userID = 1;
 
-        console.log("destination: " + destinationAddress + " | fiat: " + fiat + " | memo: " + memo);
-        handleSendingMoney(destinationAddress, fiat, memo);
+        var d = new Date();
+
+        console.log("----------------------------------------------------------------------------"
+            + "\n===> Transaction Initiated -> " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
+            + "\n= Destination: " + destinationAddress 
+            + "\n= Fiat: " + fiat 
+            + "\n= Memo: " + memo);
+        
+        //Change this for loop for testing purposes
+        for(var i = 0; i < 1; i++){
+            handleSendingMoney(destinationAddress, fiat, memo);
+        }
+        
         
         res.redirect('/');
 
@@ -56,12 +67,10 @@ convertSendingMoney = function(destination, fiat, memo, crypto) {
         else{
             //If the sell offer sum is higher or equal to the fiat amount
             if((result[0].price * result[0].amount) >= fiat){
-                console.log("aqui: " + (crypto + (fiat / result[0].price)) + "preço: " + result[0].price);
                 createBuyOrder(1, 2, result[0].price, fiat / result[0].price);
                 convertSendingMoney(destination, 0, memo, (crypto + (fiat / result[0].price)));
             }
             else{
-                console.log("aqui1:" + (crypto + result[0].amount));
                 createBuyOrder(1, 2, result[0].price, result[0].amount);
                 convertSendingMoney(destination, (fiat - (result[0].price * result[0].amount)), memo, (crypto + result[0].amount));
             }

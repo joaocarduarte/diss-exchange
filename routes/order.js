@@ -296,7 +296,7 @@ handleSellOrder = function (account, currency, price, amount) {
                                     if (err) {
                                         return 1;
                                     }
-                                    console.log("Amount da sell order: " + (result[0].amount - amount));
+                                    console.log("Amount da buy order: " + (result[0].amount - amount));
                                     return 0;
                                 });
                             });
